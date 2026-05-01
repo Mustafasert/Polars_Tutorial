@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   db:
     image: postgres:16
@@ -13,12 +14,14 @@ services:
       - ./src/generate_data.sql:/docker-entrypoint-initdb.d/init.sql
 
   etl_app:
-    image: python:3.11-slim
+    image: polars-env:latest
     container_name: polars_python
     depends_on:
       - db
     volumes:
-      - .:/app
-    working_dir: /app
-    command: >
-      bash -c "pip install -r requirements.txt && sleep 5 && python src/polars_etl.py"
+      - ./src:/app/src
+      - ./data:/app/data
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/etl_db
+      - POLARS_UNKNOWN_EXTENSION_TYPE_BEHAVIOR=load_as_storage
+    command: tail -f /dev/null
