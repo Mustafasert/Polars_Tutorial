@@ -9,28 +9,23 @@ def load_csv_to_postgres():
     print(f"Reading data from {FILE_PATH}...")
     start_time = time.time()
 
-    # 1. GEREKSİZ OVERRIDE KALDIRILDI: 
-    # Polars zaten sayısal olan 'amount'u otomatik tanıyacaktır.
+    # 1. READ CSV with Polars
     df = pl.read_csv(FILE_PATH)
 
-    # 2. GEREKSİZ SÜTUNLARI ATMA
+    # 2 remove "id" column if it exists, as it's not needed for the database
     if "id" in df.columns:
         df = df.drop("id")
 
-    # 3. SADELEŞTİRİLMİŞ DÖNÜŞÜMLER
+    # 3. Data conversion
     df = df.with_columns([
-        # Sadece tarih dönüşümü yeterli (CSV'den string gelir)
         pl.col("sale_date").str.to_date("%Y-%m-%d"),
-        
-        # Karmaşık regex temizliğine gerek yok, direkt cast et
-        # Eğer amount zaten numeric okunmuşsa bu adım hata vermez, pas geçer.
         pl.col("amount").cast(pl.Decimal(15, 2))
     ])
 
     print(f"Schema confirmed: {df.schema}")
     print(f"Loaded {df.height} rows. Writing to PostgreSQL...")
 
-    # 4. YAZMA İŞLEMİ
+    # 4. WRITE to PostgreSQL using ADBC
     df.write_database(
         table_name=TABLE_NAME,
         connection=CONNECTION_URI,
