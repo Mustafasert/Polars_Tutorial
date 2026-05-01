@@ -150,3 +150,6 @@ in the `polars_python` service environment (docker-compose) to silence it.
 ```bash
 docker-compose down -v
 ```
+
+## 10. AI Usage Disclosure: 
+ChatGPT / Gemini: Used for brainstorming the structural layout of the presentation, debugging Docker volume mapping issues, and refining English translations within this README. All generated code was manually reviewed, modified, and tested to ensure technical accuracy according to course requirements.
