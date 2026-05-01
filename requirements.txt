@@ -1,0 +1,5 @@
+polars==0.20.10
+pandas==2.2.1
+numpy==1.26.4
+connectorx==0.3.2
+psycopg2-binary==2.9.9
